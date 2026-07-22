@@ -30,12 +30,11 @@ const amenityHint = document.getElementById("amenity-hint");
 const summaryEl = document.getElementById("summary");
 const confirmBtn = document.getElementById("confirm-btn");
 
-const pickupDateEl = document.getElementById("pickup-date");
-const pickupTimeEl = document.getElementById("pickup-time");
-const pickupAddressEl = document.getElementById("pickup-address");
-const dropoffAddressEl = document.getElementById("dropoff-address");
-const passengersEl = document.getElementById("passengers");
-const notesEl = document.getElementById("notes");
+const FIXED_PICKUP_DATE = "2026-08-05";
+const FIXED_PICKUP_TIME = "16:00";
+const FIXED_PICKUP_ADDRESS = "Aéroport Charleroi Brussels (BSCA)";
+const FIXED_DROPOFF_ADDRESS = "3 Baudets, Hem";
+const FIXED_PASSENGERS = 1;
 
 const confirmOtpPanel = document.getElementById("confirm-otp-panel");
 const confirmOtpForm = document.getElementById("confirm-otp-form");
@@ -325,12 +324,12 @@ bookingForm.addEventListener("submit", async (e) => {
     .insert({
       user_id: currentSession.user.id,
       driver_id: selectedDriverId,
-      pickup_date: pickupDateEl.value,
-      pickup_time: pickupTimeEl.value,
-      pickup_address: pickupAddressEl.value.trim(),
-      dropoff_address: dropoffAddressEl.value.trim(),
-      passengers: Number(passengersEl.value),
-      notes: notesEl.value.trim() || null,
+      pickup_date: FIXED_PICKUP_DATE,
+      pickup_time: FIXED_PICKUP_TIME,
+      pickup_address: FIXED_PICKUP_ADDRESS,
+      dropoff_address: FIXED_DROPOFF_ADDRESS,
+      passengers: FIXED_PASSENGERS,
+      notes: null,
       status: "awaiting_confirmation",
     })
     .select()
@@ -423,8 +422,8 @@ async function finalizeReservation() {
   confirmOtpPanel.hidden = true;
   confirmationPanel.hidden = false;
   confirmationText.textContent =
-    `Votre course avec ${driver.name} est réservée pour le ${formatDate(pickupDateEl.value)} à ${pickupTimeEl.value}, ` +
-    `direction ${dropoffAddressEl.value}. Réservation confirmée par SMS.`;
+    `Votre course avec ${driver.name} est réservée pour le ${formatDate(FIXED_PICKUP_DATE)} à ${FIXED_PICKUP_TIME}, ` +
+    `direction ${FIXED_DROPOFF_ADDRESS}. Réservation confirmée par SMS.`;
 }
 
 function formatDate(isoDate) {

@@ -22,9 +22,9 @@ insert into public.amenities (code, label, icon, description) values
 on conflict (code) do nothing;
 
 insert into public.drivers (name, vehicle, photo_emoji, rating, years_experience, bio, base_price_cents, price_label, is_available, availability_note) values
-  ('Voliuz Leader', 'Mercedes Classe E — Noir', '🚖', 4.9, 8, 'Chauffeur professionnel, spécialiste des trajets aéroport. Ponctuel et discret.', 2200, 'Trop cher', false, 'Indisponible, en train de surveiller le travail'),
-  ('Voliuz Pirate', 'Tesla Model 3 — Blanc', '🚕', 4.8, 5, 'Trajet 100% électrique, silencieux et confortable. Idéal pour vos rendez-vous professionnels.', 2000, 'Promo', true, 'Disponible uniquement sur les heures de bureau'),
-  ('Voliuz Communication', 'Peugeot 508 — Gris', '🚗', 4.7, 3, 'Bonne humeur garantie ! Parfait pour les groupes et les longs trajets.', 1700, 'Ne te payera pas un verre — même pas', false, 'Absent pour s''occuper du iench')
+  ('Voliuz Leader', 'Renault Scenic 98 - vert pomme', '🚖', 4.9, 8, 'A souvent atteint son poste en passant plus de temps à essayer de ne rien faire et à faire porter le chapeau par un autre.', 2200, 'Trop cher', false, 'Indisponible, en train de surveiller le travail'),
+  ('Voliuz Pirate', 'Volvo XC 60 modèle 2017 - RAL 7018', '🚕', 4.8, 5, 'Souriant et disponible, préfère passer son temps a emmerder les VOLIUZ LEADERS sur la route', 2000, 'Promo', true, 'Disponible uniquement sur les heures de bureau'),
+  ('Voliuz Communication', '504 modèle pré-retraité', '🚗', 4.7, 3, 'Abonné au Figaro, fan des punks à chiens, first groupie du collectif VOLIUZ LEADERS -', 1700, 'Aime la sauce', false, 'Absent pour s''occuper du iench')
 on conflict do nothing;
 
 -- Associer des agréments à chaque chauffeur (avec supplément éventuel)

@@ -60,42 +60,7 @@
       <form id="booking-form" hidden>
 
         <section class="panel">
-          <h2>1. Votre créneau</h2>
-          <p class="hint">Un seul créneau est ouvert à la réservation actuellement.</p>
-          <div class="field-row">
-            <div class="field">
-              <label for="pickup-date">Date de prise en charge</label>
-              <input type="date" id="pickup-date" value="2026-08-05" min="2026-08-05" max="2026-08-05" required />
-            </div>
-            <div class="field">
-              <label for="pickup-time">Heure de prise en charge</label>
-              <input type="time" id="pickup-time" value="16:00" min="16:00" max="16:00" required />
-            </div>
-          </div>
-          <div class="field-row">
-            <div class="field">
-              <label for="pickup-address">Adresse de départ</label>
-              <input type="text" id="pickup-address" placeholder="12 rue de la Gare, Charleroi" required />
-            </div>
-            <div class="field">
-              <label for="dropoff-address">Adresse d'arrivée</label>
-              <input type="text" id="dropoff-address" value="Aéroport de Charleroi (BSCA)" readonly />
-            </div>
-          </div>
-          <div class="field-row">
-            <div class="field">
-              <label for="passengers">Nombre de passagers</label>
-              <input type="number" id="passengers" min="1" max="8" value="1" required />
-            </div>
-            <div class="field">
-              <label for="notes">Notes pour le chauffeur (facultatif)</label>
-              <input type="text" id="notes" placeholder="Ex : bagages volumineux, vol à 14h..." />
-            </div>
-          </div>
-        </section>
-
-        <section class="panel">
-          <h2>2. Choisissez votre chauffeur</h2>
+          <h2>1. Choisissez votre chauffeur</h2>
           <p class="hint">Sélectionnez un chauffeur disponible pour votre trajet.</p>
           <div id="driver-list" class="driver-list">
             <p class="hint">Chargement des chauffeurs…</p>
@@ -103,13 +68,13 @@
         </section>
 
         <section class="panel">
-          <h2>3. Agréments proposés</h2>
+          <h2>2. Agréments proposés</h2>
           <p class="hint" id="amenity-hint">Choisissez d'abord un chauffeur pour voir ses agréments disponibles.</p>
           <div id="amenity-grid" class="amenity-grid"></div>
         </section>
 
         <section class="panel">
-          <h2>4. Récapitulatif</h2>
+          <h2>3. Récapitulatif</h2>
           <div id="summary"></div>
           <div style="margin-top: 20px;">
             <button type="submit" class="btn btn-primary btn-block" id="confirm-btn" disabled>
@@ -121,7 +86,7 @@
 
       <!-- Double validation : second code OTP avant l'enregistrement définitif -->
       <section class="panel" id="confirm-otp-panel" hidden>
-        <h2>5. Confirmez votre réservation</h2>
+        <h2>4. Confirmez votre réservation</h2>
         <p class="hint">Pour valider définitivement, entrez le code reçu par SMS au <strong id="confirm-otp-phone-display"></strong>.</p>
         <form id="confirm-otp-form" class="auth-form" style="flex-direction: column; max-width: 320px;">
           <input type="text" id="confirm-otp-input" placeholder="123456" inputmode="numeric" pattern="[0-9]*" maxlength="6" required autocomplete="one-time-code" />
