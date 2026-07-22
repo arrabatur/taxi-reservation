@@ -5,6 +5,22 @@
 
 create extension if not exists "pgcrypto";
 
+-- Numéros ayant récemment demandé un code de connexion par SMS, utilisé
+-- par l'edge function verify-link-code pour retrouver le bon numéro au
+-- clic du lien SMS quand le navigateur n'a pas gardé l'info localement.
+-- Aucune policy de lecture publique : uniquement accessible via la clé
+-- service_role (utilisée côté serveur par l'edge function).
+create table if not exists public.pending_logins (
+  id uuid primary key default gen_random_uuid(),
+  phone text not null,
+  created_at timestamptz not null default now()
+);
+
+alter table public.pending_logins enable row level security;
+
+create policy "pending_logins_public_insert" on public.pending_logins
+  for insert with check (true);
+
 -- Chauffeurs disponibles
 create table if not exists public.drivers (
   id uuid primary key default gen_random_uuid(),

@@ -1,4 +1,4 @@
-import { sendPhoneOtp, verifyPhoneOtp, getSession, getPendingPhone } from "./auth.js";
+import { sendPhoneOtp, verifyPhoneOtp, verifyLinkCodeViaServer, getSession, getPendingPhone } from "./auth.js";
 import { supabase } from "./supabaseClient.js";
 
 const loginPhone = document.getElementById("login-phone");
@@ -56,9 +56,9 @@ let awaitingPhoneForLinkCode = false;
 
 if (codeFromLink) {
   const storedPhone = getPendingPhone();
+  showMsg(phoneMsg, "Vérification en cours…", "");
 
   if (storedPhone) {
-    showMsg(phoneMsg, "Vérification en cours…", "");
     try {
       await verifyPhoneOtp(storedPhone, codeFromLink);
       history.replaceState(null, "", window.location.pathname);
@@ -69,9 +69,18 @@ if (codeFromLink) {
       showMsg(phoneMsg, `Erreur : ${err.message}. Réessayez avec un nouveau code.`, "error");
     }
   } else {
-    awaitingPhoneForLinkCode = true;
-    phoneBtn.textContent = "Confirmer mon numéro";
-    showMsg(phoneMsg, "Confirmez votre numéro pour finaliser la connexion avec ce lien.", "");
+    // Numéro absent localement (navigation privée, autre appareil, stockage
+    // isolé...) : on tente le code côté serveur avant de redemander le numéro.
+    try {
+      await verifyLinkCodeViaServer(codeFromLink);
+      history.replaceState(null, "", window.location.pathname);
+      const session = await getSession();
+      await confirmPendingReservationAndRedirect(session.user.id);
+    } catch {
+      awaitingPhoneForLinkCode = true;
+      phoneBtn.textContent = "Confirmer mon numéro";
+      showMsg(phoneMsg, "Confirmez votre numéro pour finaliser la connexion avec ce lien.", "");
+    }
   }
 } else {
   // Déjà connecté ? Direction la réservation.
