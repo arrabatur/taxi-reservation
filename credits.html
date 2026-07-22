@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Merci — Voliuz Transport</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🚕</text></svg>" />
+  <style>
+    :root {
+      --yellow: #f5b800;
+      --black: #14161a;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: var(--black);
+      color: #fff;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      overflow: hidden;
+      height: 100vh;
+    }
+
+    .credits-viewport {
+      position: relative;
+      height: 100vh;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+    }
+
+    .credits-scroll {
+      position: absolute;
+      top: 100vh;
+      width: 100%;
+      max-width: 640px;
+      padding: 0 24px;
+      text-align: center;
+      animation: scroll-up 48s linear forwards;
+    }
+
+    .credits-scroll .brand-mark {
+      font-size: 2.5rem;
+      display: block;
+      margin-bottom: 24px;
+    }
+
+    .credits-scroll h1 {
+      color: var(--yellow);
+      font-size: 1.4rem;
+      margin: 0 0 32px;
+    }
+
+    .credits-scroll p {
+      font-size: 1.05rem;
+      line-height: 1.7;
+      color: #e5e7eb;
+      margin: 0 0 28px;
+    }
+
+    @keyframes scroll-up {
+      from {
+        top: 100vh;
+      }
+      to {
+        top: -220%;
+      }
+    }
+
+    .back-link {
+      position: fixed;
+      top: 20px;
+      right: 24px;
+      color: #e5e7eb;
+      text-decoration: none;
+      font-size: 0.9rem;
+      border: 1.5px solid rgba(255, 255, 255, 0.35);
+      padding: 8px 16px;
+      border-radius: 8px;
+    }
+
+    .back-link:hover {
+      border-color: var(--yellow);
+      color: var(--yellow);
+    }
+  </style>
+</head>
+<body>
+
+  <a href="index.html" class="back-link">Retour à l'accueil</a>
+
+  <div class="credits-viewport">
+    <div class="credits-scroll">
+      <span class="brand-mark">🚕</span>
+      <h1>Voliuz Transport</h1>
+      <p>On dit souvent qu'il ne faut pas mettre tous ses œufs dans le même panier... sauf si le panier appartient à la famille Mulliez !</p>
+      <p>Aujourd'hui, je tenais à rendre un hommage vibrant — et à peine exagéré — à cette formidable saga familiale. Grâce à vous, la France entière peut meubler son salon, retaper sa maison, s'habiller avec style, faire ses courses du quotidien et... surtout, me permettre de payer mes propres factures avec le sourire !</p>
+      <p>Plus sérieusement, merci infiniment de m'offrir un travail de si grande qualité.</p>
+      <p>Évoluer au sein d'un tel groupe est un privilège, mais la véritable cerise sur le gâteau (ou le vrai bon plan Auchan, si l'on préfère), c'est l'équipe qui m'entoure. Travailler au quotidien avec des collaborateurs d'une telle valeur, aussi talentueux qu'humains, transforme chaque journée de travail en une vraie réussite collective.</p>
+      <p>Alors, un grand merci à la famille Mulliez pour la vision et l'opportunité, et un immense bravo à mes collègues qui prouvent chaque jour que la plus grande richesse de cet empire... c'est définitivement son capital humain ! 🚀✨</p>
+    </div>
+  </div>
+
+</body>
+</html>
