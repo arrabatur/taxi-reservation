@@ -42,6 +42,7 @@ create table if not exists public.driver_amenities (
 create table if not exists public.reservations (
   id uuid primary key default gen_random_uuid(),
   user_id uuid not null references auth.users(id) on delete cascade,
+  phone_number text,
   driver_id uuid not null references public.drivers(id),
   pickup_date date not null,
   pickup_time time not null,
@@ -108,3 +109,24 @@ create policy "reservation_amenities_owner_insert" on public.reservation_ameniti
         and r.user_id = auth.uid()
     )
   );
+
+-- ============================================================
+-- Vue récapitulative : chauffeur + agréments choisis par numéro de téléphone
+-- ============================================================
+
+create or replace view public.reservation_summary as
+select
+  r.id as reservation_id,
+  r.phone_number,
+  r.status,
+  d.name as driver_name,
+  r.pickup_date,
+  r.pickup_time,
+  r.created_at,
+  coalesce(array_agg(a.label) filter (where a.label is not null), '{}') as amenities
+from public.reservations r
+join public.drivers d on d.id = r.driver_id
+left join public.reservation_amenities ra on ra.reservation_id = r.id
+left join public.amenities a on a.id = ra.amenity_id
+group by r.id, r.phone_number, r.status, d.name, r.pickup_date, r.pickup_time, r.created_at
+order by r.created_at desc;

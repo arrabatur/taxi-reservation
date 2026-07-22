@@ -323,6 +323,7 @@ bookingForm.addEventListener("submit", async (e) => {
     .from("reservations")
     .insert({
       user_id: currentSession.user.id,
+      phone_number: currentSession.user.phone,
       driver_id: selectedDriverId,
       pickup_date: FIXED_PICKUP_DATE,
       pickup_time: FIXED_PICKUP_TIME,
