@@ -904,6 +904,80 @@ section {
   }
 }
 
+/* ---------- Modal (questionnaire) ---------- */
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(20, 22, 26, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  z-index: 1000;
+}
+
+.modal-overlay[hidden] {
+  display: none;
+}
+
+.modal {
+  background: var(--white);
+  border-radius: var(--radius);
+  padding: 32px;
+  max-width: 440px;
+  width: 100%;
+  text-align: center;
+  box-shadow: var(--shadow);
+}
+
+.modal h3 {
+  margin: 0 0 10px;
+  font-size: 1.15rem;
+}
+
+.modal p {
+  margin: 0 0 22px;
+  color: var(--grey);
+}
+
+.modal-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+}
+
+.modal-actions .btn-outline {
+  background: transparent;
+  color: var(--black);
+  border: 1.5px solid var(--grey-light);
+}
+
+.modal-actions .btn-outline:hover {
+  border-color: var(--black);
+}
+
+.modal-options {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.modal-option {
+  padding: 14px 16px;
+  border: 1.5px solid var(--grey-light);
+  border-radius: 8px;
+  background: var(--white);
+  cursor: pointer;
+  font-size: 0.95rem;
+  text-align: left;
+  font-family: inherit;
+}
+
+.modal-option:hover {
+  border-color: var(--yellow-dark);
+}
+
 /* ---------- Responsive ---------- */
 
 @media (max-width: 860px) {

@@ -100,9 +100,31 @@
         <div class="check">✓</div>
         <h2>Réservation confirmée !</h2>
         <p id="confirmation-text" class="hint"></p>
-        <a href="index.html" class="btn btn-dark">Retour à l'accueil</a>
+        <button type="button" class="btn btn-dark" id="home-btn">Retour à l'accueil</button>
       </section>
 
+    </div>
+  </div>
+
+  <!-- Questionnaire poubelle, proposé avant de retourner à l'accueil -->
+  <div class="modal-overlay" id="trash-survey-overlay" hidden>
+    <div class="modal">
+      <div id="trash-survey-step1">
+        <h3>Une dernière question…</h3>
+        <p>Êtes-vous prêt(e) à payer un service de nettoyage de poubelle ?</p>
+        <div class="modal-actions">
+          <button type="button" class="btn btn-dark" id="trash-survey-yes">Oui</button>
+          <button type="button" class="btn btn-outline" id="trash-survey-no">Non</button>
+        </div>
+      </div>
+      <div id="trash-survey-step2" hidden>
+        <h3>Quelle formule vous conviendrait ?</h3>
+        <div class="modal-options">
+          <button type="button" class="modal-option" data-choice="monthly_1_20">20 € par trimestre pour 1 nettoyage mensuel</button>
+          <button type="button" class="modal-option" data-choice="monthly_2_30">30 € par trimestre pour 2 nettoyages mensuels</button>
+          <button type="button" class="modal-option" data-choice="any_price">Peu importe le prix, ma poubelle pue, j'en ai marre</button>
+        </div>
+      </div>
     </div>
   </div>
 

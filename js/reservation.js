@@ -40,6 +40,13 @@ const landingPanel = document.getElementById("landing-panel");
 
 const confirmationPanel = document.getElementById("confirmation-panel");
 const confirmationText = document.getElementById("confirmation-text");
+const homeBtn = document.getElementById("home-btn");
+
+const trashSurveyOverlay = document.getElementById("trash-survey-overlay");
+const trashSurveyStep1 = document.getElementById("trash-survey-step1");
+const trashSurveyStep2 = document.getElementById("trash-survey-step2");
+const trashSurveyYesBtn = document.getElementById("trash-survey-yes");
+const trashSurveyNoBtn = document.getElementById("trash-survey-no");
 
 // ---------- State ----------
 let currentSession = null;
@@ -372,3 +379,42 @@ function formatDate(isoDate) {
     year: "numeric",
   });
 }
+
+// ---------- Questionnaire poubelle (avant retour à l'accueil) ----------
+async function saveTrashSurveyAnswer(wantsService, priceChoice) {
+  if (!currentSession) return;
+  const { error } = await supabase.from("trash_service_survey").insert({
+    user_id: currentSession.user.id,
+    phone_number: currentSession.user.phone,
+    wants_service: wantsService,
+    price_choice: priceChoice,
+  });
+  if (error) {
+    console.error("Erreur enregistrement questionnaire poubelle :", error.message);
+  }
+}
+
+homeBtn.addEventListener("click", () => {
+  trashSurveyStep1.hidden = false;
+  trashSurveyStep2.hidden = true;
+  trashSurveyOverlay.hidden = false;
+});
+
+trashSurveyNoBtn.addEventListener("click", async () => {
+  trashSurveyOverlay.hidden = true;
+  await saveTrashSurveyAnswer(false, null);
+  window.location.href = "index.html";
+});
+
+trashSurveyYesBtn.addEventListener("click", () => {
+  trashSurveyStep1.hidden = true;
+  trashSurveyStep2.hidden = false;
+});
+
+trashSurveyStep2.querySelectorAll(".modal-option").forEach((btn) => {
+  btn.addEventListener("click", async () => {
+    trashSurveyOverlay.hidden = true;
+    await saveTrashSurveyAnswer(true, btn.dataset.choice);
+    window.location.href = "index.html";
+  });
+});
