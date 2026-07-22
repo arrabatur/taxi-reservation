@@ -1,6 +1,6 @@
 import { sendPhoneOtp, verifyPhoneOtp, verifyLinkCodeViaServer, getSession, getPendingPhone } from "./auth.js";
-import { supabase } from "./supabaseClient.js";
 
+const loginVerifying = document.getElementById("login-verifying");
 const loginPhone = document.getElementById("login-phone");
 const loginOtp = document.getElementById("login-otp");
 const phoneForm = document.getElementById("phone-form");
@@ -21,30 +21,6 @@ function showMsg(el, text, type) {
   el.className = type ? `form-msg show ${type}` : "form-msg";
 }
 
-/**
- * Retrouve la réservation en attente de confirmation (statut posé au
- * moment du clic sur "Confirmer la réservation") et la bascule en
- * confirmée, pour permettre au lien SMS d'y accéder directement.
- */
-async function confirmPendingReservationAndRedirect(userId) {
-  const { data: pending } = await supabase
-    .from("reservations")
-    .select("id")
-    .eq("user_id", userId)
-    .eq("status", "awaiting_confirmation")
-    .order("created_at", { ascending: false })
-    .limit(1)
-    .maybeSingle();
-
-  if (pending) {
-    await supabase.from("reservations").update({ status: "confirmed" }).eq("id", pending.id);
-    window.location.href = `reservation.html?confirmed=${pending.id}`;
-    return;
-  }
-
-  window.location.href = "reservation.html";
-}
-
 // Lien magique : ?code=XXXXXX envoyé par SMS, vérifié automatiquement
 // avec le numéro retenu en local lors de l'envoi du code.
 const codeFromLink = new URLSearchParams(window.location.search).get("code");
@@ -55,17 +31,22 @@ const codeFromLink = new URLSearchParams(window.location.search).get("code");
 let awaitingPhoneForLinkCode = false;
 
 if (codeFromLink) {
+  // Masqué immédiatement (avant tout appel réseau) pour éviter de voir le
+  // formulaire de saisie du numéro s'afficher brièvement avant redirection.
+  loginPhone.hidden = true;
+  loginVerifying.hidden = false;
+
   const storedPhone = getPendingPhone();
-  showMsg(phoneMsg, "Vérification en cours…", "");
 
   if (storedPhone) {
     try {
       await verifyPhoneOtp(storedPhone, codeFromLink);
       history.replaceState(null, "", window.location.pathname);
-      const session = await getSession();
-      await confirmPendingReservationAndRedirect(session.user.id);
+      window.location.href = "reservation.html";
     } catch (err) {
       history.replaceState(null, "", window.location.pathname);
+      loginVerifying.hidden = true;
+      loginPhone.hidden = false;
       showMsg(phoneMsg, `Erreur : ${err.message}. Réessayez avec un nouveau code.`, "error");
     }
   } else {
@@ -74,10 +55,11 @@ if (codeFromLink) {
     try {
       await verifyLinkCodeViaServer(codeFromLink);
       history.replaceState(null, "", window.location.pathname);
-      const session = await getSession();
-      await confirmPendingReservationAndRedirect(session.user.id);
+      window.location.href = "reservation.html";
     } catch {
       awaitingPhoneForLinkCode = true;
+      loginVerifying.hidden = true;
+      loginPhone.hidden = false;
       phoneBtn.textContent = "Confirmer mon numéro";
       showMsg(phoneMsg, "Confirmez votre numéro pour finaliser la connexion avec ce lien.", "");
     }
@@ -103,8 +85,7 @@ phoneForm.addEventListener("submit", async (e) => {
     try {
       await verifyPhoneOtp(phone, codeFromLink);
       history.replaceState(null, "", window.location.pathname);
-      const session = await getSession();
-      await confirmPendingReservationAndRedirect(session.user.id);
+      window.location.href = "reservation.html";
     } catch (err) {
       showMsg(phoneMsg, `Erreur : ${err.message}. Vérifiez le numéro ou redemandez un nouveau code.`, "error");
       awaitingPhoneForLinkCode = false;
