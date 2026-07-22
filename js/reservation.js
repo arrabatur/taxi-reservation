@@ -36,13 +36,7 @@ const FIXED_PICKUP_ADDRESS = "Aéroport Charleroi Brussels (BSCA)";
 const FIXED_DROPOFF_ADDRESS = "3 Baudets, Hem";
 const FIXED_PASSENGERS = 1;
 
-const confirmOtpPanel = document.getElementById("confirm-otp-panel");
-const confirmOtpForm = document.getElementById("confirm-otp-form");
-const confirmOtpBtn = document.getElementById("confirm-otp-btn");
-const confirmOtpInput = document.getElementById("confirm-otp-input");
-const confirmOtpMsg = document.getElementById("confirm-otp-msg");
-const confirmOtpPhoneDisplay = document.getElementById("confirm-otp-phone-display");
-const confirmOtpResendBtn = document.getElementById("confirm-otp-resend-btn");
+const landingPanel = document.getElementById("landing-panel");
 
 const confirmationPanel = document.getElementById("confirmation-panel");
 const confirmationText = document.getElementById("confirmation-text");
@@ -54,7 +48,6 @@ let selectedDriverId = null;
 let driverAmenities = []; // amenities available for the selected driver
 let selectedAmenityIds = new Set();
 let pendingPhone = null;
-let pendingReservationId = null;
 
 const confirmedIdFromUrl = new URLSearchParams(window.location.search).get("confirmed");
 
@@ -144,7 +137,7 @@ async function refreshSessionUI(session) {
     authDropdownSession.hidden = false;
     sessionPhone.textContent = session.user.phone;
     signedOutHint.hidden = true;
-    if (confirmOtpPanel.hidden && confirmationPanel.hidden) {
+    if (landingPanel.hidden && confirmationPanel.hidden) {
       bookingForm.hidden = false;
     }
     await loadDrivers();
@@ -179,7 +172,7 @@ async function showConfirmedFromUrl(reservationId) {
   if (error || !reservation) return;
 
   bookingForm.hidden = true;
-  confirmOtpPanel.hidden = true;
+  landingPanel.hidden = true;
   confirmationPanel.hidden = false;
   confirmationText.textContent =
     `Votre course avec ${reservation.drivers.name} est réservée pour le ${formatDate(reservation.pickup_date)} à ${reservation.pickup_time.slice(0, 5)}, ` +
@@ -311,7 +304,9 @@ function updateSummary() {
   summaryEl.innerHTML = rows;
 }
 
-// ---------- Étape 1 : enregistrement en attente + envoi du code de confirmation ----------
+const LANDING_ANIMATION_MS = 2600;
+
+// ---------- Enregistrement de la réservation ----------
 bookingForm.addEventListener("submit", async (e) => {
   e.preventDefault();
   if (!currentSession || !selectedDriverId) return;
@@ -331,7 +326,7 @@ bookingForm.addEventListener("submit", async (e) => {
       dropoff_address: FIXED_DROPOFF_ADDRESS,
       passengers: FIXED_PASSENGERS,
       notes: null,
-      status: "awaiting_confirmation",
+      status: "confirmed",
     })
     .select()
     .single();
@@ -354,78 +349,20 @@ bookingForm.addEventListener("submit", async (e) => {
     }
   }
 
-  pendingReservationId = reservation.id;
+  confirmBtn.disabled = false;
+  confirmBtn.textContent = "Confirmer la réservation";
   bookingForm.hidden = true;
-  confirmOtpPanel.hidden = false;
-  confirmOtpPhoneDisplay.textContent = currentSession.user.phone;
-  showMsg(confirmOtpMsg, "", "");
-  confirmOtpInput.value = "";
-  confirmOtpInput.focus();
+  landingPanel.hidden = false;
 
-  try {
-    await sendPhoneOtp(currentSession.user.phone);
-  } catch (err) {
-    showMsg(confirmOtpMsg, `Erreur lors de l'envoi du code : ${err.message}`, "error");
-  } finally {
-    confirmBtn.disabled = false;
-    confirmBtn.textContent = "Confirmer la réservation";
-  }
-});
-
-confirmOtpResendBtn.addEventListener("click", async () => {
-  confirmOtpResendBtn.disabled = true;
-  try {
-    await sendPhoneOtp(currentSession.user.phone);
-    showMsg(confirmOtpMsg, "Nouveau code envoyé.", "success");
-  } catch (err) {
-    showMsg(confirmOtpMsg, `Erreur : ${err.message}`, "error");
-  } finally {
-    confirmOtpResendBtn.disabled = false;
-  }
-});
-
-// ---------- Étape 2 : vérification du code puis confirmation définitive ----------
-confirmOtpForm.addEventListener("submit", async (e) => {
-  e.preventDefault();
-  const code = confirmOtpInput.value.trim();
-  if (!code || !currentSession || !pendingReservationId) return;
-
-  confirmOtpBtn.disabled = true;
-  confirmOtpBtn.textContent = "Vérification…";
-  showMsg(confirmOtpMsg, "", "");
-
-  try {
-    await verifyPhoneOtp(currentSession.user.phone, code);
-    await finalizeReservation();
-  } catch (err) {
-    showMsg(confirmOtpMsg, `Erreur : ${err.message}`, "error");
-    confirmOtpBtn.disabled = false;
-    confirmOtpBtn.textContent = "Valider la réservation";
-  }
-});
-
-async function finalizeReservation() {
   const driver = drivers.find((d) => d.id === selectedDriverId);
-
-  const { error } = await supabase
-    .from("reservations")
-    .update({ status: "confirmed" })
-    .eq("id", pendingReservationId);
-
-  if (error) {
-    confirmOtpBtn.disabled = false;
-    confirmOtpBtn.textContent = "Valider la réservation";
-    showMsg(confirmOtpMsg, `Erreur lors de la confirmation : ${error.message}`, "error");
-    return;
-  }
-
-  bookingForm.hidden = true;
-  confirmOtpPanel.hidden = true;
-  confirmationPanel.hidden = false;
-  confirmationText.textContent =
-    `Votre course avec ${driver.name} est réservée pour le ${formatDate(FIXED_PICKUP_DATE)} à ${FIXED_PICKUP_TIME}, ` +
-    `direction ${FIXED_DROPOFF_ADDRESS}. Réservation confirmée par SMS.`;
-}
+  setTimeout(() => {
+    landingPanel.hidden = true;
+    confirmationPanel.hidden = false;
+    confirmationText.textContent =
+      `Votre course avec ${driver.name} est réservée pour le ${formatDate(FIXED_PICKUP_DATE)} à ${FIXED_PICKUP_TIME}, ` +
+      `direction ${FIXED_DROPOFF_ADDRESS}.`;
+  }, LANDING_ANIMATION_MS);
+});
 
 function formatDate(isoDate) {
   return new Date(`${isoDate}T00:00:00`).toLocaleDateString("fr-FR", {

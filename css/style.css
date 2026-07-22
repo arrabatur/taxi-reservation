@@ -844,6 +844,66 @@ section {
   margin: 0 auto 18px;
 }
 
+.landing-scene {
+  position: relative;
+  height: 220px;
+  overflow: hidden;
+  border-radius: var(--radius);
+  background: linear-gradient(180deg, #7fb8e8 0%, #bfe0f7 55%, #eaf6ff 100%);
+  margin: 0 auto 24px;
+}
+
+.landing-scene .plane {
+  position: absolute;
+  left: 105%;
+  top: 8%;
+  font-size: 48px;
+  transform: rotate(20deg);
+  animation: plane-land 2.6s cubic-bezier(0.35, 0.02, 0.55, 1) forwards;
+}
+
+.landing-scene .runway {
+  position: absolute;
+  bottom: 26px;
+  left: 0;
+  right: 0;
+  height: 6px;
+  background: repeating-linear-gradient(90deg, #fff 0 24px, transparent 24px 48px);
+  opacity: 0.85;
+}
+
+.landing-scene .ground {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 26px;
+  background: #4b6b4f;
+}
+
+@keyframes plane-land {
+  0% {
+    left: 105%;
+    top: 8%;
+    transform: rotate(20deg);
+  }
+  65% {
+    left: 42%;
+    top: 46%;
+    transform: rotate(8deg);
+  }
+  85% {
+    left: 20%;
+    top: 58%;
+    transform: rotate(2deg);
+  }
+  100% {
+    left: 10%;
+    top: 60%;
+    transform: rotate(0deg);
+  }
+}
+
 /* ---------- Responsive ---------- */
 
 @media (max-width: 860px) {

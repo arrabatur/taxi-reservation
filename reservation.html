@@ -84,16 +84,15 @@
         </section>
       </form>
 
-      <!-- Double validation : second code OTP avant l'enregistrement définitif -->
-      <section class="panel" id="confirm-otp-panel" hidden>
-        <h2>4. Confirmez votre réservation</h2>
-        <p class="hint">Pour valider définitivement, entrez le code reçu par SMS au <strong id="confirm-otp-phone-display"></strong>.</p>
-        <form id="confirm-otp-form" class="auth-form" style="flex-direction: column; max-width: 320px;">
-          <input type="text" id="confirm-otp-input" placeholder="123456" inputmode="numeric" pattern="[0-9]*" maxlength="6" required autocomplete="one-time-code" />
-          <button type="submit" class="btn btn-primary btn-block" id="confirm-otp-btn">Valider la réservation</button>
-        </form>
-        <div id="confirm-otp-msg" class="form-msg"></div>
-        <button type="button" id="confirm-otp-resend-btn" class="link-btn">Renvoyer le code</button>
+      <!-- Écran d'atterrissage : affiché pendant l'enregistrement de la réservation -->
+      <section class="panel confirmation" id="landing-panel" hidden>
+        <div class="landing-scene">
+          <span class="plane">✈️</span>
+          <div class="runway"></div>
+          <div class="ground"></div>
+        </div>
+        <h2>Atterrissage en cours…</h2>
+        <p class="hint">Votre réservation est en train d'être enregistrée.</p>
       </section>
 
       <!-- Confirmation -->
