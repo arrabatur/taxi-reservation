@@ -45,6 +45,7 @@ const homeBtn = document.getElementById("home-btn");
 const trashSurveyOverlay = document.getElementById("trash-survey-overlay");
 const trashSurveyStep1 = document.getElementById("trash-survey-step1");
 const trashSurveyStep2 = document.getElementById("trash-survey-step2");
+const trashSurveyStep3 = document.getElementById("trash-survey-step3");
 const trashSurveyYesBtn = document.getElementById("trash-survey-yes");
 const trashSurveyNoBtn = document.getElementById("trash-survey-no");
 
@@ -397,13 +398,14 @@ async function saveTrashSurveyAnswer(wantsService, priceChoice) {
 homeBtn.addEventListener("click", () => {
   trashSurveyStep1.hidden = false;
   trashSurveyStep2.hidden = true;
+  trashSurveyStep3.hidden = true;
   trashSurveyOverlay.hidden = false;
 });
 
 trashSurveyNoBtn.addEventListener("click", async () => {
-  trashSurveyOverlay.hidden = true;
   await saveTrashSurveyAnswer(false, null);
-  window.location.href = "index.html";
+  trashSurveyStep1.hidden = true;
+  trashSurveyStep3.hidden = false;
 });
 
 trashSurveyYesBtn.addEventListener("click", () => {
@@ -413,8 +415,8 @@ trashSurveyYesBtn.addEventListener("click", () => {
 
 trashSurveyStep2.querySelectorAll(".modal-option").forEach((btn) => {
   btn.addEventListener("click", async () => {
-    trashSurveyOverlay.hidden = true;
     await saveTrashSurveyAnswer(true, btn.dataset.choice);
-    window.location.href = "index.html";
+    trashSurveyStep2.hidden = true;
+    trashSurveyStep3.hidden = false;
   });
 });
