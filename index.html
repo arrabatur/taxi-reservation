@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Voliuz Transport — Votre course vous attend</title>
+  <meta name="description" content="Entrez votre numéro de téléphone pour recevoir votre code et réserver votre course Voliuz Transport." />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🚕</text></svg>" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="container">
+      <a href="index.html" class="brand">
+        <span class="brand-mark">🚕</span>
+        Voliuz Transport
+      </a>
+    </div>
+  </header>
+
+  <div class="login-hero">
+    <div class="container login-hero-grid">
+
+      <div class="login-panel-wrap">
+        <section class="panel" id="login-panel">
+          <div id="login-phone">
+            <h2>Recevez un code de connexion par SMS</h2>
+            <p class="hint">Entrez votre numéro de téléphone pour accéder à votre réservation.</p>
+            <form id="phone-form" class="auth-form" style="flex-direction: column;">
+              <input type="tel" id="phone-input" placeholder="+32 470 12 34 56" required autocomplete="tel" />
+              <button type="submit" class="btn btn-primary btn-block" id="phone-btn">Recevoir mon code</button>
+            </form>
+            <div id="phone-msg" class="form-msg"></div>
+          </div>
+
+          <div id="login-otp" hidden>
+            <h2>Entrez votre code</h2>
+            <p class="hint">Code reçu par SMS au <strong id="otp-phone-display"></strong>.</p>
+            <form id="otp-form" class="auth-form" style="flex-direction: column;">
+              <input type="text" id="otp-input" placeholder="123456" inputmode="numeric" pattern="[0-9]*" maxlength="6" required autocomplete="one-time-code" />
+              <button type="submit" class="btn btn-primary btn-block" id="otp-btn">Valider et réserver</button>
+            </form>
+            <div id="otp-msg" class="form-msg"></div>
+            <button type="button" id="otp-back-btn" class="link-btn">Changer de numéro</button>
+          </div>
+        </section>
+      </div>
+
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <div class="container">
+      <span>© <span id="year"></span> Voliuz Transport</span>
+      <span>Projet de démonstration — Supabase + GitHub Pages</span>
+    </div>
+  </footer>
+
+  <script>
+    document.getElementById("year").textContent = new Date().getFullYear();
+  </script>
+  <script type="module" src="js/login.js"></script>
+</body>
+</html>

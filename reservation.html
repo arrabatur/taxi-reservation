@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Réserver un chauffeur — Voliuz Transport</title>
+  <meta name="description" content="Connectez-vous par SMS puis réservez le créneau du 5 août à l'aéroport de Charleroi, choisissez votre chauffeur et vos agréments de trajet." />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🚕</text></svg>" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="container">
+      <a href="index.html" class="brand">
+        <span class="brand-mark">🚕</span>
+        Voliuz Transport
+      </a>
+      <nav>
+        <a href="index.html">Accueil</a>
+        <a href="index.html#chauffeurs">Chauffeurs</a>
+      </nav>
+      <div class="auth-widget" id="auth-widget">
+        <button type="button" id="auth-toggle-btn" class="auth-toggle">Se connecter</button>
+        <div id="auth-dropdown" class="auth-dropdown" hidden>
+          <div id="auth-dropdown-phone">
+            <p class="hint">Votre course vous attend ! Recevez une invitation à réserver par SMS.</p>
+            <form id="phone-form" class="auth-form">
+              <input type="tel" id="phone-input" placeholder="+32 470 12 34 56" required autocomplete="tel" />
+              <button type="submit" class="btn btn-dark" id="phone-btn">Recevoir mon invitation</button>
+            </form>
+            <div id="phone-msg" class="form-msg"></div>
+          </div>
+          <div id="auth-dropdown-otp" hidden>
+            <p class="hint">Reprenez le code reçu par SMS au <strong id="otp-phone-display"></strong> pour accéder à votre réservation.</p>
+            <form id="otp-form" class="auth-form">
+              <input type="text" id="otp-input" placeholder="123456" inputmode="numeric" pattern="[0-9]*" maxlength="6" required autocomplete="one-time-code" />
+              <button type="submit" class="btn btn-dark" id="otp-btn">Valider</button>
+            </form>
+            <div id="otp-msg" class="form-msg"></div>
+            <button type="button" id="otp-back-btn" class="link-btn">Changer de numéro</button>
+          </div>
+          <div id="auth-dropdown-session" hidden>
+            <p class="hint">Connecté en tant que <strong id="session-phone"></strong></p>
+            <button id="signout-btn" type="button" class="btn btn-dark btn-block">Se déconnecter</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="page-header">
+    <div class="container">
+      <h1>Réserver un chauffeur</h1>
+      <p>Connectez-vous par SMS, puis réservez le créneau du 5 août à l'aéroport de Charleroi, choisissez votre chauffeur et vos agréments.</p>
+    </div>
+  </div>
+
+  <div class="res-layout">
+    <div class="container" style="max-width: 760px;">
+
+      <!-- Réservation (masquée tant que non connecté) -->
+      <p class="hint" id="signed-out-hint">Connectez-vous via le bouton "Se connecter" en haut de page pour réserver un chauffeur.</p>
+      <form id="booking-form" hidden>
+
+        <section class="panel">
+          <h2>1. Votre créneau</h2>
+          <p class="hint">Un seul créneau est ouvert à la réservation actuellement.</p>
+          <div class="field-row">
+            <div class="field">
+              <label for="pickup-date">Date de prise en charge</label>
+              <input type="date" id="pickup-date" value="2026-08-05" min="2026-08-05" max="2026-08-05" required />
+            </div>
+            <div class="field">
+              <label for="pickup-time">Heure de prise en charge</label>
+              <input type="time" id="pickup-time" value="16:00" min="16:00" max="16:00" required />
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label for="pickup-address">Adresse de départ</label>
+              <input type="text" id="pickup-address" placeholder="12 rue de la Gare, Charleroi" required />
+            </div>
+            <div class="field">
+              <label for="dropoff-address">Adresse d'arrivée</label>
+              <input type="text" id="dropoff-address" value="Aéroport de Charleroi (BSCA)" readonly />
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label for="passengers">Nombre de passagers</label>
+              <input type="number" id="passengers" min="1" max="8" value="1" required />
+            </div>
+            <div class="field">
+              <label for="notes">Notes pour le chauffeur (facultatif)</label>
+              <input type="text" id="notes" placeholder="Ex : bagages volumineux, vol à 14h..." />
+            </div>
+          </div>
+        </section>
+
+        <section class="panel">
+          <h2>2. Choisissez votre chauffeur</h2>
+          <p class="hint">Sélectionnez un chauffeur disponible pour votre trajet.</p>
+          <div id="driver-list" class="driver-list">
+            <p class="hint">Chargement des chauffeurs…</p>
+          </div>
+        </section>
+
+        <section class="panel">
+          <h2>3. Agréments proposés</h2>
+          <p class="hint" id="amenity-hint">Choisissez d'abord un chauffeur pour voir ses agréments disponibles.</p>
+          <div id="amenity-grid" class="amenity-grid"></div>
+        </section>
+
+        <section class="panel">
+          <h2>4. Récapitulatif</h2>
+          <div id="summary"></div>
+          <div style="margin-top: 20px;">
+            <button type="submit" class="btn btn-primary btn-block" id="confirm-btn" disabled>
+              Confirmer la réservation
+            </button>
+          </div>
+        </section>
+      </form>
+
+      <!-- Double validation : second code OTP avant l'enregistrement définitif -->
+      <section class="panel" id="confirm-otp-panel" hidden>
+        <h2>5. Confirmez votre réservation</h2>
+        <p class="hint">Pour valider définitivement, entrez le code reçu par SMS au <strong id="confirm-otp-phone-display"></strong>.</p>
+        <form id="confirm-otp-form" class="auth-form" style="flex-direction: column; max-width: 320px;">
+          <input type="text" id="confirm-otp-input" placeholder="123456" inputmode="numeric" pattern="[0-9]*" maxlength="6" required autocomplete="one-time-code" />
+          <button type="submit" class="btn btn-primary btn-block" id="confirm-otp-btn">Valider la réservation</button>
+        </form>
+        <div id="confirm-otp-msg" class="form-msg"></div>
+        <button type="button" id="confirm-otp-resend-btn" class="link-btn">Renvoyer le code</button>
+      </section>
+
+      <!-- Confirmation -->
+      <section class="panel confirmation" id="confirmation-panel" hidden>
+        <div class="check">✓</div>
+        <h2>Réservation confirmée !</h2>
+        <p id="confirmation-text" class="hint"></p>
+        <a href="index.html" class="btn btn-dark">Retour à l'accueil</a>
+      </section>
+
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <div class="container">
+      <span>© <span id="year"></span> Voliuz Transport</span>
+      <span>Projet de démonstration — Supabase + GitHub Pages</span>
+    </div>
+  </footer>
+
+  <script>
+    document.getElementById("year").textContent = new Date().getFullYear();
+  </script>
+  <script type="module" src="js/reservation.js"></script>
+</body>
+</html>
