@@ -49,13 +49,19 @@ async function confirmPendingReservationAndRedirect(userId) {
 // avec le numéro retenu en local lors de l'envoi du code.
 const codeFromLink = new URLSearchParams(window.location.search).get("code");
 
+// Si le lien est ouvert sur un autre appareil/navigateur que celui utilisé
+// pour demander le code, le numéro en attente n'est pas dans le localStorage
+// local : on demande alors de le confirmer pour finaliser avec ce même code.
+let awaitingPhoneForLinkCode = false;
+
 if (codeFromLink) {
   const storedPhone = getPendingPhone();
-  showMsg(phoneMsg, "Vérification en cours…", "");
 
   if (storedPhone) {
+    showMsg(phoneMsg, "Vérification en cours…", "");
     try {
       await verifyPhoneOtp(storedPhone, codeFromLink);
+      history.replaceState(null, "", window.location.pathname);
       const session = await getSession();
       await confirmPendingReservationAndRedirect(session.user.id);
     } catch (err) {
@@ -63,8 +69,9 @@ if (codeFromLink) {
       showMsg(phoneMsg, `Erreur : ${err.message}. Réessayez avec un nouveau code.`, "error");
     }
   } else {
-    history.replaceState(null, "", window.location.pathname);
-    showMsg(phoneMsg, "Ce lien n'est plus valide sur cet appareil. Redemandez un code.", "error");
+    awaitingPhoneForLinkCode = true;
+    phoneBtn.textContent = "Confirmer mon numéro";
+    showMsg(phoneMsg, "Confirmez votre numéro pour finaliser la connexion avec ce lien.", "");
   }
 } else {
   // Déjà connecté ? Direction la réservation.
@@ -78,6 +85,27 @@ phoneForm.addEventListener("submit", async (e) => {
   e.preventDefault();
   const phone = phoneInput.value.trim();
   if (!phone) return;
+
+  if (awaitingPhoneForLinkCode) {
+    phoneBtn.disabled = true;
+    phoneBtn.textContent = "Vérification…";
+    showMsg(phoneMsg, "", "");
+
+    try {
+      await verifyPhoneOtp(phone, codeFromLink);
+      history.replaceState(null, "", window.location.pathname);
+      const session = await getSession();
+      await confirmPendingReservationAndRedirect(session.user.id);
+    } catch (err) {
+      showMsg(phoneMsg, `Erreur : ${err.message}. Vérifiez le numéro ou redemandez un nouveau code.`, "error");
+      awaitingPhoneForLinkCode = false;
+      history.replaceState(null, "", window.location.pathname);
+    } finally {
+      phoneBtn.disabled = false;
+      phoneBtn.textContent = "Recevoir mon code";
+    }
+    return;
+  }
 
   phoneBtn.disabled = true;
   phoneBtn.textContent = "Envoi en cours…";
