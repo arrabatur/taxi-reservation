@@ -40,6 +40,7 @@
       padding: 0 24px;
       text-align: center;
       animation: scroll-up 48s linear forwards;
+      pointer-events: none;
     }
 
     .credits-scroll .brand-mark {
@@ -72,14 +73,17 @@
 
     .back-link {
       position: fixed;
-      top: 20px;
-      right: 24px;
+      bottom: 28px;
+      left: 50%;
+      transform: translateX(-50%);
       color: #e5e7eb;
       text-decoration: none;
       font-size: 0.9rem;
       border: 1.5px solid rgba(255, 255, 255, 0.35);
-      padding: 8px 16px;
+      padding: 10px 20px;
       border-radius: 8px;
+      background: var(--black);
+      z-index: 10;
     }
 
     .back-link:hover {
