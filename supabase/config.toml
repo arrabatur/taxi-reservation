@@ -1,0 +1,13 @@
+# ============================================================
+# Configuration du projet Supabase (CLI)
+# ============================================================
+
+[functions.verify-link-code]
+# Appelée par un visiteur non connecté (c'est justement son rôle : lui
+# permettre de se connecter). La vérification JWT par défaut de la
+# passerelle rejette la clé publishable "sb_publishable_..." (nouveau
+# format de clé API Supabase, pas un JWT), ce qui fait échouer l'appel
+# avant même d'atteindre le code de la fonction. On la désactive ici ;
+# l'edge function elle-même n'utilise cette clé que pour l'appel interne
+# à auth.verifyOtp, jamais pour autoriser l'accès à la fonction.
+verify_jwt = false
